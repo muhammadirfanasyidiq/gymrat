@@ -1,0 +1,2627 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Gym Guide - By @mirfanasy</title>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
+    <style>
+        /* ===== VARIABEL ===== */
+        :root {
+            --bg: #f0f2f5;
+            --bg-card: #ffffff;
+            --text: #1a1a2e;
+            --text-secondary: #444;
+            --border: #ddd;
+            --shadow: rgba(0, 0, 0, 0.12);
+            --primary: #1a1a2e;
+            --primary-light: #0f3460;
+            --accent: #e94560;
+            --success: #2d6a4f;
+            --warn: #ffc107;
+            --table-hover: #e8f0fe;
+            --nav-bg: #f0f2f5;
+            --input-bg: white;
+            --chart-bg: white;
+        }
+
+        [data-theme="dark"] {
+            --bg: #121212;
+            --bg-card: #1e1e2a;
+            --text: #e4e4e4;
+            --text-secondary: #aaa;
+            --border: #333;
+            --shadow: rgba(255, 255, 255, 0.05);
+            --primary: #e94560;
+            --primary-light: #e94560;
+            --table-hover: #2a2a3e;
+            --nav-bg: #2a2a3a;
+            --input-bg: #2a2a3a;
+            --chart-bg: #1e1e2a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 12px;
+            transition: background 0.3s, color 0.3s;
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border-radius: 14px;
+            box-shadow: 0 0 30px var(--shadow);
+            padding: 20px 24px;
+            transition: background 0.3s;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            text-align: center;
+            border-bottom: 4px solid var(--accent);
+            padding-bottom: 10px;
+            margin-bottom: 14px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 28pt;
+            color: var(--text);
+            letter-spacing: 2px;
+        }
+        .header h1 span {
+            color: var(--accent);
+        }
+        .header p {
+            font-size: 10.5pt;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        /* ===== TOOLBAR ===== */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .toolbar .timer-section {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar .timer-section label {
+            font-weight: 600;
+            font-size: 9.5pt;
+            color: var(--text-secondary);
+        }
+
+        .timer-btn {
+            background: var(--nav-bg);
+            border: 2px solid transparent;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 9.5pt;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            color: var(--text);
+        }
+
+        .timer-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .timer-btn:hover {
+            border-color: var(--accent);
+        }
+
+        #timerDisplay {
+            font-size: 15pt;
+            font-weight: 700;
+            color: var(--accent);
+            min-width: 60px;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-controls button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 3px 12px;
+            border-radius: 30px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 9.5pt;
+        }
+        .timer-controls button:hover {
+            opacity: 0.8;
+        }
+
+        .dark-toggle {
+            background: var(--nav-bg);
+            border: none;
+            padding: 5px 14px;
+            border-radius: 30px;
+            font-size: 13pt;
+            cursor: pointer;
+            transition: 0.3s;
+            color: var(--text);
+        }
+        .dark-toggle:hover {
+            background: var(--border);
+        }
+
+        /* ===== LEVEL SELECTOR ===== */
+        .level-selector {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .level-selector label {
+            font-weight: 600;
+            font-size: 9.5pt;
+            color: var(--text-secondary);
+        }
+
+        .level-btn {
+            background: var(--nav-bg);
+            border: 2px solid transparent;
+            padding: 3px 12px;
+            border-radius: 30px;
+            font-size: 9pt;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            color: var(--text);
+        }
+
+        .level-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        .level-btn:hover {
+            border-color: var(--accent);
+        }
+
+        /* ===== NAVIGASI ===== */
+        .nav-menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .nav-btn {
+            background: var(--nav-bg);
+            border: 2px solid transparent;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 10.5pt;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            color: var(--text);
+        }
+
+        .nav-btn:hover {
+            border-color: var(--accent);
+        }
+        .nav-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* ===== KONTEN ===== */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== INFO BOX ===== */
+        .info-box {
+            background: var(--nav-bg);
+            border-left: 6px solid var(--accent);
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+        }
+
+        .info-box h3 {
+            font-size: 13pt;
+            margin-bottom: 2px;
+            color: var(--text);
+        }
+        .info-box p {
+            font-size: 10pt;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .info-box .cocok {
+            background: #d4edda;
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 9.5pt;
+            font-weight: 600;
+            color: #155724;
+            margin-top: 4px;
+        }
+        [data-theme="dark"] .info-box .cocok {
+            background: #1a3a2a;
+            color: #7ddb9a;
+        }
+
+        /* ===== HARI LABEL ===== */
+        .hari-label {
+            background: var(--primary);
+            color: white;
+            padding: 3px 14px;
+            border-radius: 30px;
+            font-size: 12pt;
+            font-weight: 700;
+            display: inline-block;
+            margin: 14px 0 4px 0;
+        }
+        .hari-label.hypertrophy {
+            background: var(--accent);
+        }
+        .hari-label.upper {
+            background: var(--primary-light);
+        }
+        .hari-label.lower {
+            background: var(--success);
+        }
+        .hari-label.fullbody {
+            background: #7b2cbf;
+        }
+
+        .teknik {
+            font-size: 8.5pt;
+            color: var(--text-secondary);
+            background: var(--nav-bg);
+            padding: 1px 8px;
+            border-radius: 12px;
+            display: inline-block;
+            margin: 1px 0 2px 0;
+        }
+        .teknik strong {
+            color: var(--accent);
+        }
+
+        .warmup {
+            background: #fff3cd;
+            border-left: 6px solid var(--warn);
+            padding: 3px 10px;
+            font-size: 9.5pt;
+            color: #856404;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        [data-theme="dark"] .warmup {
+            background: #2a2510;
+            color: #f0d080;
+            border-color: #f0a030;
+        }
+
+        .rest-info {
+            font-size: 9pt;
+            color: var(--text-secondary);
+            background: var(--nav-bg);
+            padding: 2px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        /* ===== TABEL ===== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9.5pt;
+            margin-bottom: 4px;
+        }
+
+        table thead th {
+            background: var(--primary);
+            color: white;
+            padding: 4px 4px;
+            text-align: left;
+            font-size: 9pt;
+            border: 1px solid var(--border);
+        }
+
+        table tbody td {
+            padding: 3px 4px;
+            border: 1px solid var(--border);
+            vertical-align: middle;
+            color: var(--text);
+        }
+
+        table tbody tr:nth-child(even) {
+            background: var(--nav-bg);
+        }
+        table tbody tr:hover {
+            background: var(--table-hover);
+        }
+
+        .no-col {
+            text-align: center;
+            font-weight: 600;
+            width: 4%;
+        }
+        .set-col,
+        .reps-col,
+        .rest-col {
+            text-align: center;
+            width: 6%;
+        }
+        .target-col {
+            font-weight: 500;
+            color: var(--primary-light);
+            font-size: 8.5pt;
+        }
+        [data-theme="dark"] .target-col {
+            color: #8ab4f8;
+        }
+
+        /* ===== RPE ===== */
+        .rpe-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            align-items: center;
+            margin: 8px 0;
+        }
+
+        .rpe-group label {
+            font-weight: 600;
+            font-size: 9.5pt;
+            color: var(--text-secondary);
+            margin-right: 4px;
+        }
+
+        .rpe-btn {
+            background: var(--nav-bg);
+            border: 2px solid transparent;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 9pt;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            color: var(--text);
+        }
+
+        .rpe-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        .rpe-btn:hover {
+            border-color: var(--accent);
+        }
+
+        .rpe-btn.low {
+            color: #2d6a4f;
+        }
+        .rpe-btn.mid {
+            color: #f0a030;
+        }
+        .rpe-btn.high {
+            color: #e94560;
+        }
+        [data-theme="dark"] .rpe-btn.low {
+            color: #7ddb9a;
+        }
+        [data-theme="dark"] .rpe-btn.mid {
+            color: #f0d080;
+        }
+        [data-theme="dark"] .rpe-btn.high {
+            color: #ff6b8a;
+        }
+
+        /* ===== JOURNAL ===== */
+        .journal-section {
+            margin: 14px 0 10px 0;
+            padding: 10px 14px;
+            background: var(--nav-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .journal-section h4 {
+            font-size: 11.5pt;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+
+        .journal-section textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--input-bg);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 10pt;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .journal-section button {
+            padding: 4px 16px;
+            border-radius: 30px;
+            border: none;
+            background: var(--accent);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 9.5pt;
+            margin-top: 4px;
+        }
+
+        .journal-section button:hover {
+            opacity: 0.8;
+        }
+
+        .journal-entry {
+            background: var(--bg-card);
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-top: 6px;
+            font-size: 9.5pt;
+            color: var(--text-secondary);
+        }
+
+        .journal-entry strong {
+            color: var(--accent);
+        }
+
+        /* ===== KALENDER ===== */
+        .calendar-section {
+            margin: 14px 0 10px 0;
+            padding: 10px 14px;
+            background: var(--nav-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .calendar-section h4 {
+            font-size: 11.5pt;
+            margin-bottom: 6px;
+            color: var(--text);
+        }
+
+        .calendar-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .cal-day {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--bg-card);
+            padding: 3px 10px 3px 6px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            font-size: 9.5pt;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .cal-day:hover {
+            border-color: var(--accent);
+        }
+        .cal-day.done {
+            background: #d4edda;
+            border-color: var(--success);
+            color: #155724;
+        }
+        [data-theme="dark"] .cal-day.done {
+            background: #1a3a2a;
+            color: #7ddb9a;
+        }
+
+        .cal-day input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .cal-day .cal-date {
+            font-size: 7.5pt;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* ===== STATISTIK ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .stats-card {
+            background: var(--nav-bg);
+            padding: 10px 14px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stats-card .num {
+            font-size: 20pt;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+        }
+
+        .stats-card .label {
+            font-size: 9pt;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* ===== GRAFIK ===== */
+        .chart-container {
+            margin: 14px 0;
+            padding: 10px 14px;
+            background: var(--nav-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .chart-container h4 {
+            font-size: 11.5pt;
+            margin-bottom: 6px;
+            color: var(--text);
+        }
+
+        .chart-container canvas {
+            max-height: 220px;
+            max-width: 100%;
+            background: var(--chart-bg);
+            border-radius: 8px;
+        }
+
+        /* ===== 1RM ===== */
+        .rm-section {
+            margin: 14px 0 10px 0;
+            padding: 10px 14px;
+            background: var(--nav-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .rm-section h4 {
+            font-size: 11.5pt;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+
+        .rm-section .rm-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .rm-section input {
+            padding: 4px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--input-bg);
+            color: var(--text);
+            width: 90px;
+            font-size: 10pt;
+        }
+
+        .rm-section select {
+            padding: 4px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: 10pt;
+        }
+
+        .rm-section button {
+            padding: 4px 16px;
+            border-radius: 30px;
+            border: none;
+            background: var(--accent);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 10pt;
+        }
+
+        .rm-section button:hover {
+            opacity: 0.8;
+        }
+
+        #rmResult {
+            font-size: 13pt;
+            font-weight: 700;
+            color: var(--accent);
+            margin-top: 4px;
+        }
+
+        /* ===== PROGRESS BAR ===== */
+        .progress-section {
+            margin: 14px 0 10px 0;
+            padding: 10px 14px;
+            background: var(--nav-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .progress-section h4 {
+            font-size: 11.5pt;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+
+        .progress-bar-outer {
+            width: 100%;
+            height: 20px;
+            background: var(--bg-card);
+            border-radius: 30px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .progress-bar-inner {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--accent));
+            border-radius: 30px;
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9pt;
+            font-weight: 700;
+            color: white;
+        }
+
+        /* ===== EXPORT ===== */
+        .export-section {
+            margin: 14px 0 10px 0;
+            text-align: center;
+        }
+
+        .export-section button {
+            padding: 6px 20px;
+            border-radius: 30px;
+            border: none;
+            background: var(--primary-light);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 10pt;
+        }
+
+        .export-section button:hover {
+            opacity: 0.8;
+        }
+
+        /* ===== QUOTE & MUSIK ===== */
+        .quote-box {
+            text-align: center;
+            font-size: 10.5pt;
+            font-style: italic;
+            color: var(--text-secondary);
+            padding: 6px;
+            border-top: 2px dashed var(--border);
+            margin-top: 10px;
+        }
+        .quote-box strong {
+            color: var(--accent);
+            font-style: normal;
+        }
+
+        .musik-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            padding: 4px 0;
+        }
+
+        .musik-box a {
+            background: var(--nav-bg);
+            padding: 3px 14px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 9.5pt;
+            color: var(--text);
+            border: 1px solid var(--border);
+            transition: 0.3s;
+        }
+
+        .musik-box a:hover {
+            border-color: var(--accent);
+            background: var(--table-hover);
+        }
+
+        /* ===== DEVELOPER ===== */
+        .developer {
+            text-align: center;
+            padding: 8px 0 2px 0;
+            border-top: 2px solid var(--border);
+            margin-top: 12px;
+            font-size: 10pt;
+            color: var(--text-secondary);
+        }
+
+        .developer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .developer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== CETAK ===== */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+                padding: 12px 15px;
+                background: white;
+            }
+            .nav-menu {
+                display: none;
+            }
+            .toolbar {
+                display: none;
+            }
+            .content-section {
+                display: block !important;
+            }
+            .content-section:not(:first-of-type) {
+                display: none !important;
+            }
+            .calendar-section {
+                display: none;
+            }
+            .rm-section {
+                display: none;
+            }
+            .quote-box {
+                display: none;
+            }
+            .musik-box {
+                display: none;
+            }
+            .developer {
+                display: none;
+            }
+            .journal-section {
+                display: none;
+            }
+            .stats-grid {
+                display: none;
+            }
+            .chart-container {
+                display: none;
+            }
+            .progress-section {
+                display: none;
+            }
+            .export-section {
+                display: none;
+            }
+            .rpe-group {
+                display: none;
+            }
+            table tbody tr:hover {
+                background: #f9f9f9;
+            }
+        }
+
+        @media screen and (max-width: 700px) {
+            .container {
+                padding: 8px 6px;
+            }
+            .header h1 {
+                font-size: 18pt;
+            }
+            .nav-btn {
+                font-size: 9pt;
+                padding: 5px 10px;
+            }
+            table {
+                font-size: 7.5pt;
+            }
+            .hari-label {
+                font-size: 10pt;
+            }
+            .toolbar {
+                gap: 4px;
+            }
+            .timer-btn {
+                font-size: 8.5pt;
+                padding: 3px 8px;
+            }
+            #timerDisplay {
+                font-size: 12pt;
+                min-width: 50px;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .stats-card .num {
+                font-size: 16pt;
+            }
+            .cal-day {
+                font-size: 8.5pt;
+                padding: 2px 6px 2px 4px;
+            }
+            .level-btn {
+                font-size: 8pt;
+                padding: 2px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- ===== HEADER ===== -->
+        <div class="header">
+            <h1>🏋️ ULTIMATE <span>GYM GUIDE</span></h1>
+            <p>Pilih split & level • Tracking progres • All in one!</p>
+        </div>
+
+        <!-- ===== TOOLBAR ===== -->
+        <div class="toolbar">
+
+            <!-- TIMER -->
+            <div class="timer-section">
+                <label>⏱️ Timer:</label>
+                <button class="timer-btn active" data-time="60">60s</button>
+                <button class="timer-btn" data-time="90">90s</button>
+                <button class="timer-btn" data-time="120">2m</button>
+                <button class="timer-btn" data-time="180">3m</button>
+                <span id="timerDisplay">01:00</span>
+                <div class="timer-controls">
+                    <button id="timerStart">▶ Mulai</button>
+                    <button id="timerReset">⟲ Reset</button>
+                </div>
+            </div>
+
+            <!-- LEVEL -->
+            <div class="level-selector">
+                <label>📊 Level:</label>
+                <button class="level-btn active" data-level="pemula">🟢 Pemula</button>
+                <button class="level-btn" data-level="menengah">🟡 Menengah</button>
+                <button class="level-btn" data-level="lanjutan">🔴 Lanjutan</button>
+            </div>
+
+            <!-- DARK MODE -->
+            <button class="dark-toggle" id="darkToggle">🌙</button>
+        </div>
+
+        <!-- ===== NAVIGASI ===== -->
+        <div class="nav-menu">
+            <button class="nav-btn active" data-target="ppl">🔥 PPL 6 Hari</button>
+            <button class="nav-btn" data-target="upperlower">💪 Upper/Lower 4x</button>
+            <button class="nav-btn" data-target="fullbody">🧠 Full Body 3x</button>
+            <button class="nav-btn" data-target="brosplit">🎯 Bro Split 5x</button>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- ================ KALENDER CHECKLIST ============================ -->
+        <!-- ================================================================ -->
+        <div class="calendar-section" id="calendarSection">
+            <h4>📅 Checklist Latihan Minggu Ini</h4>
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- diisi oleh JS -->
+            </div>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- ================ PROGRESS BAR HARI INI ========================= -->
+        <!-- ================================================================ -->
+        <div class="progress-section" id="progressSection">
+            <h4>📊 Progress Latihan Hari Ini</h4>
+            <div class="progress-bar-outer">
+                <div class="progress-bar-inner" id="progressBarInner" style="width:0%;">0%</div>
+            </div>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- ================ STATISTIK MINGGUAN ============================ -->
+        <!-- ================================================================ -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stats-card"><span class="num" id="statSets">0</span><span class="label">Total Set</span></div>
+            <div class="stats-card"><span class="num" id="statReps">0</span><span class="label">Total Reps</span></div>
+            <div class="stats-card"><span class="num" id="statVolume">0</span><span class="label">Volume (kg)</span></div>
+            <div class="stats-card"><span class="num" id="statDays">0</span><span class="label">Hari Latihan</span></div>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- ================ GRAFIK PROGRES ================================ -->
+        <!-- ================================================================ -->
+        <div class="chart-container">
+            <h4>📈 Progres Beban (kg) - 4 Minggu Terakhir</h4>
+            <canvas id="progressChart"></canvas>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- ================ RPE & JOURNAL ================================= -->
+        <!-- ================================================================ -->
+        <div class="journal-section">
+            <h4>📝 RPE & Catatan Harian</h4>
+            <div class="rpe-group">
+                <label>RPE (Intensitas):</label>
+                <button class="rpe-btn low" data-rpe="1">1</button>
+                <button class="rpe-btn low" data-rpe="2">2</button>
+                <button class="rpe-btn low" data-rpe="3">3</button>
+                <button class="rpe-btn mid" data-rpe="4">4</button>
+                <button class="rpe-btn mid" data-rpe="5">5</button>
+                <button class="rpe-btn mid" data-rpe="6">6</button>
+                <button class="rpe-btn high" data-rpe="7">7</button>
+                <button class="rpe-btn high active" data-rpe="8">8</button>
+                <button class="rpe-btn high" data-rpe="9">9</button>
+                <button class="rpe-btn high" data-rpe="10">10</button>
+                <span id="rpeDisplay" style="font-weight:700;color:var(--accent);font-size:10pt;">RPE: 8</span>
+            </div>
+            <textarea id="journalInput" placeholder="Tulis catatan latihan hari ini... (energi, cedera, catatan teknik, dll)"></textarea>
+            <button id="journalSave">💾 Simpan Catatan</button>
+            <div id="journalEntries"></div>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- ================ 1RM KALKULATOR ================================ -->
+        <!-- ================================================================ -->
+        <div class="rm-section">
+            <h4>📊 Kalkulator 1RM (One Rep Max)</h4>
+            <div class="rm-row">
+                <input type="number" id="rmWeight" placeholder="Beban (kg)" value="60">
+                <select id="rmReps">
+                    <option value="1">1 rep</option>
+                    <option value="2">2 rep</option>
+                    <option value="3" selected>3 rep</option>
+                    <option value="4">4 rep</option>
+                    <option value="5">5 rep</option>
+                    <option value="6">6 rep</option>
+                    <option value="7">7 rep</option>
+                    <option value="8">8 rep</option>
+                    <option value="9">9 rep</option>
+                    <option value="10">10 rep</option>
+                </select>
+                <button id="rmCalculate">Hitung 1RM</button>
+                <span id="rmResult">-</span>
+            </div>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- ================ EXPORT DATA ==================================== -->
+        <!-- ================================================================ -->
+        <div class="export-section">
+            <button id="exportCSV">📥 Export Data (CSV)</button>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- ================ KONTEN LATIHAN ================================ -->
+        <!-- ================================================================ -->
+
+        <!-- ===== PPL ===== -->
+        <div id="ppl" class="content-section active">
+            <div class="info-box">
+                <h3>🔥 PPL 6 Hari (Push • Pull • Legs)</h3>
+                <p><strong>Deskripsi:</strong> Membagi tubuh menjadi 3 kelompok: Push (dada, bahu, trisep), Pull (punggung, bisep), dan Legs (kaki). Dilatih 2x seminggu = frekuensi tinggi untuk hasil maksimal.</p>
+                <p><strong>Manfaat:</strong> Frekuensi 2x per minggu per kelompok otot, volume tinggi, cocok untuk natural lifter yang ingin massa otot maksimal.</p>
+                <span class="cocok">✅ Cocok untuk: Menengah – Lanjutan (3–5x latihan/minggu)</span>
+            </div>
+
+            <!-- SENIN -->
+            <div class="hari-label">📅 SENIN – PUSH A (STRENGTH)</div>
+            <div class="warmup">🔥 WARM-UP: 5-10 menit cardio + Dynamic Stretching</div>
+            <div class="rest-info">⏱️ REST: 2–3 menit</div>
+            <table>
+                <thead><tr><th>No</th><th>Latihan</th><th>Set</th><th>Reps</th><th>Otot Target</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="no-col">1</td>
+                        <td>Barbell Bench Press <span class="teknik"><strong>Teknik:</strong> Turunkan ke dada tengah, siku 45°</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">5–8</td>
+                        <td class="target-col">Dada (Chest)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">2</td>
+                        <td>Incline Dumbbell Press <span class="teknik"><strong>Teknik:</strong> Kursi 30-45°, turunkan ke dada atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Dada Atas</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">3</td>
+                        <td>Seated Dumbbell Shoulder Press <span class="teknik"><strong>Teknik:</strong> Punggung rata, dorong ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Bahu Depan</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">4</td>
+                        <td>Dips <span class="teknik"><strong>Teknik:</strong> Turunkan hingga siku 90°, jaga dada tegak</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">8–12</td>
+                        <td class="target-col">Dada Bawah & Trisep</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">5</td>
+                        <td>Dumbbell Lateral Raise <span class="teknik"><strong>Teknik:</strong> Angkat ke samping hingga sejajar bahu</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Bahu Samping</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">6</td>
+                        <td>Rope Tricep Pushdown <span class="teknik"><strong>Teknik:</strong> Siku di sisi, dorong ke bawah</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Trisep</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">7</td>
+                        <td>Overhead Rope Tricep Extension <span class="teknik"><strong>Teknik:</strong> Rope di atas kepala, turunkan ke belakang</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Trisep (Long Head)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- SELASA -->
+            <div class="hari-label">📅 SELASA – PULL A (STRENGTH)</div>
+            <div class="warmup">🔥 WARM-UP: 5-10 menit cardio + Band Pull-Apart</div>
+            <div class="rest-info">⏱️ REST: 2–3 menit</div>
+            <table>
+                <thead><tr><th>No</th><th>Latihan</th><th>Set</th><th>Reps</th><th>Otot Target</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="no-col">1</td>
+                        <td>Pull Up / Chin-Up <span class="teknik"><strong>Teknik:</strong> Tarik dada ke palang, turunkan pelan</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">6–10</td>
+                        <td class="target-col">Lats & Bisep</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">2</td>
+                        <td>Barbell Row <span class="teknik"><strong>Teknik:</strong> Punggung rata, tarik ke perut bawah</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Punggung Tengah</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">3</td>
+                        <td>Seated Cable Row <span class="teknik"><strong>Teknik:</strong> Punggung tegak, tarik ke perut</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Punggung Tengah</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">4</td>
+                        <td>Face Pull <span class="teknik"><strong>Teknik:</strong> Tarik ke arah wajah, putar pergelangan</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Rear Deltoid</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">5</td>
+                        <td>Rear Deltoid Fly <span class="teknik"><strong>Teknik:</strong> Membungkuk 45°, angkat ke samping</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Rear Deltoid</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">6</td>
+                        <td>EZ Bar Curl <span class="teknik"><strong>Teknik:</strong> Siku di sisi, tekuk ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Bisep</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">7</td>
+                        <td>Hammer Curl <span class="teknik"><strong>Teknik:</strong> Genggam netral, tekuk ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Bisep (Brachialis)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">8</td>
+                        <td>Plank <span class="teknik"><strong>Teknik:</strong> Tubuh lurus, tahan kontraksi perut</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">45–60″</td>
+                        <td class="target-col">Core</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- RABU -->
+            <div class="hari-label">📅 RABU – LEGS A (STRENGTH)</div>
+            <div class="warmup">🔥 WARM-UP: 5-10 menit sepeda + Bodyweight Squat</div>
+            <div class="rest-info">⏱️ REST: 2–3 menit</div>
+            <table>
+                <thead><tr><th>No</th><th>Latihan</th><th>Set</th><th>Reps</th><th>Otot Target</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="no-col">1</td>
+                        <td>Back Squat <span class="teknik"><strong>Teknik:</strong> Turunkan hingga paha sejajar, jaga dada tegak</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">5–8</td>
+                        <td class="target-col">Quad, Glute, Hamstring</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">2</td>
+                        <td>Romanian Deadlift <span class="teknik"><strong>Teknik:</strong> Turunkan hingga betis, jaga punggung rata</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Hamstring, Glute</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">3</td>
+                        <td>Leg Press <span class="teknik"><strong>Teknik:</strong> Turunkan hingga lutut 90°, dorong dengan tumit</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Quad, Glute</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">4</td>
+                        <td>Leg Extension <span class="teknik"><strong>Teknik:</strong> Angkat betis, kontraksikan quad</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Quadriceps</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">5</td>
+                        <td>Leg Curl <span class="teknik"><strong>Teknik:</strong> Tekuk lutut ke bawah, kontraksikan hamstring</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Hamstring</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">6</td>
+                        <td>Standing Calf Raise <span class="teknik"><strong>Teknik:</strong> Angkat tumit setinggi mungkin</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Betis</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">7</td>
+                        <td>Hanging Leg Raise <span class="teknik"><strong>Teknik:</strong> Angkat lutut ke dada, turunkan pelan</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Core Bawah</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- KAMIS -->
+            <div class="hari-label hari-label hypertrophy">📅 KAMIS – PUSH B (HYPERTROPHY)</div>
+            <div class="warmup">🔥 WARM-UP: 5-10 menit cardio + Dynamic Stretching</div>
+            <div class="rest-info">⏱️ REST: 60–90 detik</div>
+            <table>
+                <thead><tr><th>No</th><th>Latihan</th><th>Set</th><th>Reps</th><th>Otot Target</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="no-col">1</td>
+                        <td>Incline Barbell Bench Press <span class="teknik"><strong>Teknik:</strong> Kursi 30-45°, turunkan ke dada atas</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Dada Atas</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">2</td>
+                        <td>Flat Dumbbell Press <span class="teknik"><strong>Teknik:</strong> Telentang, turunkan ke samping dada</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Dada (Chest)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">3</td>
+                        <td>Pec Deck / Cable Fly <span class="teknik"><strong>Teknik:</strong> Tarik ke depan seperti memeluk</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Dada (Chest)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">4</td>
+                        <td>Dumbbell Lateral Raise <span class="teknik"><strong>Teknik:</strong> Angkat ke samping hingga sejajar bahu</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Bahu Samping</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">5</td>
+                        <td>Cable Lateral Raise <span class="teknik"><strong>Teknik:</strong> Tarik dari bawah ke samping</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Bahu Samping</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">6</td>
+                        <td>Skull Crusher <span class="teknik"><strong>Teknik:</strong> Turunkan ke dahi, ekstensi ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Trisep</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">7</td>
+                        <td>Rope Pushdown <span class="teknik"><strong>Teknik:</strong> Dorong ke bawah, kontraksikan trisep</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Trisep</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- JUMAT -->
+            <div class="hari-label hari-label hypertrophy">📅 JUMAT – PULL B (HYPERTROPHY)</div>
+            <div class="warmup">🔥 WARM-UP: 5-10 menit cardio + Band Pull-Apart</div>
+            <div class="rest-info">⏱️ REST: 60–90 detik</div>
+            <table>
+                <thead><tr><th>No</th><th>Latihan</th><th>Set</th><th>Reps</th><th>Otot Target</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="no-col">1</td>
+                        <td>Chest Supported Row <span class="teknik"><strong>Teknik:</strong> Sandaran di dada, tarik beban ke perut</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Punggung Tengah</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">2</td>
+                        <td>Neutral Grip Lat Pulldown <span class="teknik"><strong>Teknik:</strong> Genggam netral, tarik ke dada atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Punggung (Lats)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">3</td>
+                        <td>T-Bar Row <span class="teknik"><strong>Teknik:</strong> Punggung rata, tarik beban ke dada</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Punggung Tengah</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">4</td>
+                        <td>Straight Arm Pulldown <span class="teknik"><strong>Teknik:</strong> Lengan lurus, tarik ke bawah</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Punggung (Lats)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">5</td>
+                        <td>Reverse Pec Deck <span class="teknik"><strong>Teknik:</strong> Tarik ke belakang, remas rear delt</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Rear Deltoid</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">6</td>
+                        <td>Preacher Curl <span class="teknik"><strong>Teknik:</strong> Sandaran lengan di pad, tekuk ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Bisep</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">7</td>
+                        <td>Incline Dumbbell Curl <span class="teknik"><strong>Teknik:</strong> Duduk di incline, tekuk ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Bisep (Long Head)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">8</td>
+                        <td>Plank <span class="teknik"><strong>Teknik:</strong> Tubuh lurus, tahan kontraksi perut</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">45–60″</td>
+                        <td class="target-col">Core</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- SABTU -->
+            <div class="hari-label hari-label hypertrophy">📅 SABTU – LEGS B (HYPERTROPHY)</div>
+            <div class="warmup">🔥 WARM-UP: 5-10 menit sepeda + Bodyweight Squat</div>
+            <div class="rest-info">⏱️ REST: 60–90 detik</div>
+            <table>
+                <thead><tr><th>No</th><th>Latihan</th><th>Set</th><th>Reps</th><th>Otot Target</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="no-col">1</td>
+                        <td>Front Squat / Hack Squat <span class="teknik"><strong>Teknik:</strong> Barbel di depan, turunkan hingga paha sejajar</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Quadriceps, Glute</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">2</td>
+                        <td>Bulgarian Split Squat <span class="teknik"><strong>Teknik:</strong> Kaki belakang di bangku, turunkan hingga lutut depan 90°</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Quad, Glute</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">3</td>
+                        <td>Walking Lunge <span class="teknik"><strong>Teknik:</strong> Melangkah ke depan, turunkan hingga lutut 90°</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Quad, Glute, Hamstring</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">4</td>
+                        <td>Hip Thrust <span class="teknik"><strong>Teknik:</strong> Punggung di bangku, dorong pinggul ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Glute, Hamstring</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">5</td>
+                        <td>Seated Leg Curl <span class="teknik"><strong>Teknik:</strong> Duduk, tekuk ke bawah, kontraksikan hamstring</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Hamstring</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">6</td>
+                        <td>Leg Extension <span class="teknik"><strong>Teknik:</strong> Angkat betis, kontraksikan quad</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Quadriceps ✅</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">7</td>
+                        <td>Standing Calf Raise <span class="teknik"><strong>Teknik:</strong> Angkat tumit setinggi mungkin</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Betis</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">8</td>
+                        <td>Hanging Leg Raise <span class="teknik"><strong>Teknik:</strong> Angkat lutut ke dada, turunkan pelan</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Core Bawah</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ===== UPPER/LOWER ===== -->
+        <div id="upperlower" class="content-section">
+            <div class="info-box">
+                <h3>💪 Upper / Lower 4x Seminggu</h3>
+                <p><strong>Deskripsi:</strong> Membagi tubuh menjadi 2 sesi: Upper Body dan Lower Body. Dilatih bergantian 4x seminggu.</p>
+                <p><strong>Manfaat:</strong> Frekuensi 2x per minggu per kelompok otot, pemulihan lebih baik, cocok untuk pemula hingga menengah.</p>
+                <span class="cocok">✅ Cocok untuk: Pemula – Menengah (4x latihan/minggu)</span>
+            </div>
+            <div class="hari-label hari-label upper">📅 SENIN – UPPER A (STRENGTH)</div>
+            <div class="warmup">🔥 WARM-UP: 5-10 menit cardio + Dynamic Stretching</div>
+            <div class="rest-info">⏱️ REST: 2–3 menit</div>
+            <table>
+                <thead><tr><th>No</th><th>Latihan</th><th>Set</th><th>Reps</th><th>Otot Target</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="no-col">1</td>
+                        <td>Barbell Bench Press <span class="teknik"><strong>Teknik:</strong> Turunkan ke dada tengah, siku 45°</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">5–8</td>
+                        <td class="target-col">Dada (Chest)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">2</td>
+                        <td>Barbell Row <span class="teknik"><strong>Teknik:</strong> Punggung rata, tarik ke perut bawah</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Punggung Tengah</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">3</td>
+                        <td>Seated Dumbbell Shoulder Press <span class="teknik"><strong>Teknik:</strong> Punggung rata, dorong ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Bahu Depan</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">4</td>
+                        <td>Lat Pulldown <span class="teknik"><strong>Teknik:</strong> Tarik ke dada atas, jaga siku ke bawah</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Punggung (Lats)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">5</td>
+                        <td>Dumbbell Lateral Raise <span class="teknik"><strong>Teknik:</strong> Angkat ke samping hingga sejajar bahu</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Bahu Samping</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">6</td>
+                        <td>EZ Bar Curl <span class="teknik"><strong>Teknik:</strong> Siku di sisi, tekuk ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Bisep</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">7</td>
+                        <td>Rope Tricep Pushdown <span class="teknik"><strong>Teknik:</strong> Siku di sisi, dorong ke bawah</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Trisep</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="hari-label hari-label lower">📅 SELASA – LOWER A (STRENGTH)</div>
+            <div class="warmup">🔥 WARM-UP: 5-10 menit sepeda + Bodyweight Squat</div>
+            <div class="rest-info">⏱️ REST: 2–3 menit</div>
+            <table>
+                <thead><tr><th>No</th><th>Latihan</th><th>Set</th><th>Reps</th><th>Otot Target</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="no-col">1</td>
+                        <td>Back Squat <span class="teknik"><strong>Teknik:</strong> Turunkan hingga paha sejajar, jaga dada tegak</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">5–8</td>
+                        <td class="target-col">Quad, Glute, Hamstring</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">2</td>
+                        <td>Romanian Deadlift <span class="teknik"><strong>Teknik:</strong> Turunkan hingga betis, jaga punggung rata</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Hamstring, Glute</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">3</td>
+                        <td>Leg Press <span class="teknik"><strong>Teknik:</strong> Turunkan hingga lutut 90°, dorong dengan tumit</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Quad, Glute</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">4</td>
+                        <td>Leg Curl <span class="teknik"><strong>Teknik:</strong> Tekuk lutut ke bawah, kontraksikan hamstring</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Hamstring</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">5</td>
+                        <td>Standing Calf Raise <span class="teknik"><strong>Teknik:</strong> Angkat tumit setinggi mungkin</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Betis</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">6</td>
+                        <td>Hanging Leg Raise <span class="teknik"><strong>Teknik:</strong> Angkat lutut ke dada</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Core</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="hari-label hari-label upper">📅 KAMIS – UPPER B (HYPERTROPHY)</div>
+            <div class="warmup">🔥 WARM-UP: 5-10 menit cardio + Dynamic Stretching</div>
+            <div class="rest-info">⏱️ REST: 60–90 detik</div>
+            <table>
+                <thead><tr><th>No</th><th>Latihan</th><th>Set</th><th>Reps</th><th>Otot Target</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="no-col">1</td>
+                        <td>Incline Dumbbell Press <span class="teknik"><strong>Teknik:</strong> Kursi 30-45°, turunkan ke dada atas</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Dada Atas</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">2</td>
+                        <td>Chest Supported Row <span class="teknik"><strong>Teknik:</strong> Sandaran di dada, tarik beban ke perut</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Punggung Tengah</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">3</td>
+                        <td>Arnold Press <span class="teknik"><strong>Teknik:</strong> Putar dumbbell dari depan ke samping saat dorong</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Bahu Depan & Samping</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">4</td>
+                        <td>Seated Cable Row <span class="teknik"><strong>Teknik:</strong> Punggung tegak, tarik ke perut</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Punggung Tengah</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">5</td>
+                        <td>Cable Lateral Raise <span class="teknik"><strong>Teknik:</strong> Tarik dari bawah ke samping</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Bahu Samping</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">6</td>
+                        <td>Hammer Curl <span class="teknik"><strong>Teknik:</strong> Genggam netral, tekuk ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Bisep</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">7</td>
+                        <td>Skull Crusher <span class="teknik"><strong>Teknik:</strong> Turunkan ke dahi, ekstensi ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Trisep</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="hari-label hari-label lower">📅 JUMAT – LOWER B (HYPERTROPHY)</div>
+            <div class="warmup">🔥 WARM-UP: 5-10 menit sepeda + Bodyweight Squat</div>
+            <div class="rest-info">⏱️ REST: 60–90 detik</div>
+            <table>
+                <thead><tr><th>No</th><th>Latihan</th><th>Set</th><th>Reps</th><th>Otot Target</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="no-col">1</td>
+                        <td>Front Squat / Hack Squat <span class="teknik"><strong>Teknik:</strong> Barbel di depan, turunkan hingga paha sejajar</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Quadriceps, Glute</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">2</td>
+                        <td>Bulgarian Split Squat <span class="teknik"><strong>Teknik:</strong> Kaki belakang di bangku, turunkan hingga lutut depan 90°</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Quad, Glute</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">3</td>
+                        <td>Hip Thrust <span class="teknik"><strong>Teknik:</strong> Punggung di bangku, dorong pinggul ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Glute, Hamstring</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">4</td>
+                        <td>Leg Extension <span class="teknik"><strong>Teknik:</strong> Angkat betis, kontraksikan quad</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Quadriceps</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">5</td>
+                        <td>Seated Leg Curl <span class="teknik"><strong>Teknik:</strong> Tekuk ke bawah, kontraksikan hamstring</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Hamstring</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">6</td>
+                        <td>Standing Calf Raise <span class="teknik"><strong>Teknik:</strong> Angkat tumit setinggi mungkin</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Betis</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">7</td>
+                        <td>Plank <span class="teknik"><strong>Teknik:</strong> Tubuh lurus, tahan kontraksi perut</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">45–60″</td>
+                        <td class="target-col">Core</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ===== FULL BODY ===== -->
+        <div id="fullbody" class="content-section">
+            <div class="info-box">
+                <h3>🧠 Full Body 3x Seminggu</h3>
+                <p><strong>Deskripsi:</strong> Melatih seluruh tubuh dalam satu sesi. Dilakukan 3x seminggu dengan hari istirahat di antaranya.</p>
+                <p><strong>Manfaat:</strong> Frekuensi tinggi (3x per minggu per otot), pemulihan maksimal, efektif untuk pemula dan yang sibuk.</p>
+                <span class="cocok">✅ Cocok untuk: Pemula – Semua Level (3x latihan/minggu)</span>
+            </div>
+            <div class="hari-label hari-label fullbody">📅 SENIN – FULL BODY A</div>
+            <div class="warmup">🔥 WARM-UP: 5-10 menit cardio + Dynamic Stretching</div>
+            <div class="rest-info">⏱️ REST: 60–90 detik</div>
+            <table>
+                <thead><tr><th>No</th><th>Latihan</th><th>Set</th><th>Reps</th><th>Otot Target</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="no-col">1</td>
+                        <td>Barbell Squat <span class="teknik"><strong>Teknik:</strong> Turunkan hingga paha sejajar, jaga dada tegak</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Quad, Glute, Hamstring</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">2</td>
+                        <td>Barbell Bench Press <span class="teknik"><strong>Teknik:</strong> Turunkan ke dada tengah, siku 45°</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Dada (Chest)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">3</td>
+                        <td>Barbell Row <span class="teknik"><strong>Teknik:</strong> Punggung rata, tarik ke perut bawah</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Punggung Tengah</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">4</td>
+                        <td>Seated Dumbbell Shoulder Press <span class="teknik"><strong>Teknik:</strong> Punggung rata, dorong ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Bahu Depan</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">5</td>
+                        <td>Lat Pulldown <span class="teknik"><strong>Teknik:</strong> Tarik ke dada atas, jaga siku ke bawah</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Punggung (Lats)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">6</td>
+                        <td>Leg Curl <span class="teknik"><strong>Teknik:</strong> Tekuk lutut ke bawah, kontraksikan hamstring</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Hamstring</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">7</td>
+                        <td>Dumbbell Curl <span class="teknik"><strong>Teknik:</strong> Siku di sisi, tekuk ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Bisep</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">8</td>
+                        <td>Rope Pushdown <span class="teknik"><strong>Teknik:</strong> Dorong ke bawah, kontraksikan trisep</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Trisep</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="hari-label hari-label fullbody">📅 RABU – FULL BODY B</div>
+            <div class="warmup">🔥 WARM-UP: 5-10 menit cardio + Dynamic Stretching</div>
+            <div class="rest-info">⏱️ REST: 60–90 detik</div>
+            <table>
+                <thead><tr><th>No</th><th>Latihan</th><th>Set</th><th>Reps</th><th>Otot Target</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="no-col">1</td>
+                        <td>Romanian Deadlift <span class="teknik"><strong>Teknik:</strong> Turunkan hingga betis, jaga punggung rata</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Hamstring, Glute</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">2</td>
+                        <td>Incline Dumbbell Press <span class="teknik"><strong>Teknik:</strong> Kursi 30-45°, turunkan ke dada atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Dada Atas</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">3</td>
+                        <td>Chest Supported Row <span class="teknik"><strong>Teknik:</strong> Sandaran di dada, tarik beban ke perut</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Punggung Tengah</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">4</td>
+                        <td>Dumbbell Lateral Raise <span class="teknik"><strong>Teknik:</strong> Angkat ke samping hingga sejajar bahu</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Bahu Samping</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">5</td>
+                        <td>Leg Press <span class="teknik"><strong>Teknik:</strong> Turunkan hingga lutut 90°, dorong dengan tumit</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Quad, Glute</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">6</td>
+                        <td>Face Pull <span class="teknik"><strong>Teknik:</strong> Tarik ke arah wajah, putar pergelangan</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Rear Deltoid</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">7</td>
+                        <td>Hammer Curl <span class="teknik"><strong>Teknik:</strong> Genggam netral, tekuk ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Bisep</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">8</td>
+                        <td>Skull Crusher <span class="teknik"><strong>Teknik:</strong> Turunkan ke dahi, ekstensi ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Trisep</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="hari-label hari-label fullbody">📅 JUMAT – FULL BODY C</div>
+            <div class="warmup">🔥 WARM-UP: 5-10 menit cardio + Dynamic Stretching</div>
+            <div class="rest-info">⏱️ REST: 60–90 detik</div>
+            <table>
+                <thead><tr><th>No</th><th>Latihan</th><th>Set</th><th>Reps</th><th>Otot Target</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="no-col">1</td>
+                        <td>Front Squat / Hack Squat <span class="teknik"><strong>Teknik:</strong> Barbel di depan, turunkan hingga paha sejajar</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Quadriceps, Glute</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">2</td>
+                        <td>Flat Dumbbell Press <span class="teknik"><strong>Teknik:</strong> Telentang, turunkan ke samping dada</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Dada (Chest)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">3</td>
+                        <td>Neutral Grip Lat Pulldown <span class="teknik"><strong>Teknik:</strong> Genggam netral, tarik ke dada atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Punggung (Lats)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">4</td>
+                        <td>Arnold Press <span class="teknik"><strong>Teknik:</strong> Putar dumbbell dari depan ke samping saat dorong</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Bahu Depan & Samping</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">5</td>
+                        <td>Leg Extension <span class="teknik"><strong>Teknik:</strong> Angkat betis, kontraksikan quad</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Quadriceps</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">6</td>
+                        <td>Seated Leg Curl <span class="teknik"><strong>Teknik:</strong> Tekuk ke bawah, kontraksikan hamstring</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Hamstring</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">7</td>
+                        <td>Preacher Curl <span class="teknik"><strong>Teknik:</strong> Sandaran lengan di pad, tekuk ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Bisep</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">8</td>
+                        <td>Rope Pushdown <span class="teknik"><strong>Teknik:</strong> Dorong ke bawah, kontraksikan trisep</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Trisep</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ===== BRO SPLIT ===== -->
+        <div id="brosplit" class="content-section">
+            <div class="info-box">
+                <h3>🎯 Bro Split 5x Seminggu</h3>
+                <p><strong>Deskripsi:</strong> Metode klasik: 1 kelompok otot per hari. Dada, Punggung, Bahu, Kaki, Lengan.</p>
+                <p><strong>Manfaat:</strong> Volume sangat tinggi per otot, pemulihan 7 hari penuh, cocok untuk atlet tingkat lanjut yang butuh fokus maksimal.</p>
+                <span class="cocok">✅ Cocok untuk: Lanjutan – Profesional (5x latihan/minggu)</span>
+            </div>
+            <div class="hari-label">📅 SENIN – DADA (CHEST)</div>
+            <div class="warmup">🔥 WARM-UP: 5-10 menit cardio + Arm Circles + Band Pull-Apart</div>
+            <div class="rest-info">⏱️ REST: 60–90 detik</div>
+            <table>
+                <thead><tr><th>No</th><th>Latihan</th><th>Set</th><th>Reps</th><th>Otot Target</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="no-col">1</td>
+                        <td>Barbell Bench Press <span class="teknik"><strong>Teknik:</strong> Turunkan ke dada tengah, siku 45°</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">6–10</td>
+                        <td class="target-col">Dada (Chest)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">2</td>
+                        <td>Incline Dumbbell Press <span class="teknik"><strong>Teknik:</strong> Kursi 30-45°, turunkan ke dada atas</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">8–12</td>
+                        <td class="target-col">Dada Atas</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">3</td>
+                        <td>Pec Deck Fly <span class="teknik"><strong>Teknik:</strong> Tarik ke depan seperti memeluk</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Dada (Chest)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">4</td>
+                        <td>Dips <span class="teknik"><strong>Teknik:</strong> Turunkan hingga siku 90°, jaga dada tegak</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">8–12</td>
+                        <td class="target-col">Dada Bawah & Trisep</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">5</td>
+                        <td>Cable Fly (Bawah) <span class="teknik"><strong>Teknik:</strong> Tarik dari atas ke bawah, remas dada</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Dada Bawah</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">6</td>
+                        <td>Push Up <span class="teknik"><strong>Teknik:</strong> Tubuh lurus, turunkan hingga dada dekat lantai</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">15–20</td>
+                        <td class="target-col">Dada (Chest)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="hari-label">📅 SELASA – PUNGGUNG (BACK)</div>
+            <div class="warmup">🔥 WARM-UP: 5-10 menit cardio + Band Pull-Apart + Scapular Retraction</div>
+            <div class="rest-info">⏱️ REST: 60–90 detik</div>
+            <table>
+                <thead><tr><th>No</th><th>Latihan</th><th>Set</th><th>Reps</th><th>Otot Target</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="no-col">1</td>
+                        <td>Pull Up / Lat Pulldown <span class="teknik"><strong>Teknik:</strong> Tarik dada ke palang, turunkan pelan</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">6–10</td>
+                        <td class="target-col">Punggung (Lats)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">2</td>
+                        <td>Barbell Row <span class="teknik"><strong>Teknik:</strong> Punggung rata, tarik ke perut bawah</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Punggung Tengah</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">3</td>
+                        <td>Seated Cable Row <span class="teknik"><strong>Teknik:</strong> Punggung tegak, tarik ke perut</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Punggung Tengah</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">4</td>
+                        <td>Straight Arm Pulldown <span class="teknik"><strong>Teknik:</strong> Lengan lurus, tarik ke bawah</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Punggung (Lats)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">5</td>
+                        <td>Face Pull <span class="teknik"><strong>Teknik:</strong> Tarik ke arah wajah, putar pergelangan</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Rear Deltoid</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">6</td>
+                        <td>Rear Deltoid Fly <span class="teknik"><strong>Teknik:</strong> Membungkuk 45°, angkat ke samping</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Rear Deltoid</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="hari-label">📅 RABU – BAHU (SHOULDERS)</div>
+            <div class="warmup">🔥 WARM-UP: 5-10 menit cardio + Band Pull-Apart + Arm Circles</div>
+            <div class="rest-info">⏱️ REST: 60–90 detik</div>
+            <table>
+                <thead><tr><th>No</th><th>Latihan</th><th>Set</th><th>Reps</th><th>Otot Target</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="no-col">1</td>
+                        <td>Seated Dumbbell Shoulder Press <span class="teknik"><strong>Teknik:</strong> Punggung rata, dorong ke atas</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Bahu Depan</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">2</td>
+                        <td>Dumbbell Lateral Raise <span class="teknik"><strong>Teknik:</strong> Angkat ke samping hingga sejajar bahu</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Bahu Samping</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">3</td>
+                        <td>Cable Lateral Raise <span class="teknik"><strong>Teknik:</strong> Tarik dari bawah ke samping</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Bahu Samping</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">4</td>
+                        <td>Arnold Press <span class="teknik"><strong>Teknik:</strong> Putar dumbbell dari depan ke samping saat dorong</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Bahu Depan & Samping</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">5</td>
+                        <td>Face Pull <span class="teknik"><strong>Teknik:</strong> Tarik ke arah wajah</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Rear Deltoid</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">6</td>
+                        <td>Shrugs <span class="teknik"><strong>Teknik:</strong> Angkat bahu setinggi mungkin, tahan di puncak</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Trapezius</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="hari-label">📅 KAMIS – KAKI (LEGS)</div>
+            <div class="warmup">🔥 WARM-UP: 5-10 menit sepeda + Bodyweight Squat + Leg Swings</div>
+            <div class="rest-info">⏱️ REST: 60–90 detik</div>
+            <table>
+                <thead><tr><th>No</th><th>Latihan</th><th>Set</th><th>Reps</th><th>Otot Target</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="no-col">1</td>
+                        <td>Back Squat <span class="teknik"><strong>Teknik:</strong> Turunkan hingga paha sejajar, jaga dada tegak</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">6–10</td>
+                        <td class="target-col">Quad, Glute, Hamstring</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">2</td>
+                        <td>Romanian Deadlift <span class="teknik"><strong>Teknik:</strong> Turunkan hingga betis, jaga punggung rata</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">8–10</td>
+                        <td class="target-col">Hamstring, Glute</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">3</td>
+                        <td>Leg Press <span class="teknik"><strong>Teknik:</strong> Turunkan hingga lutut 90°, dorong dengan tumit</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Quad, Glute</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">4</td>
+                        <td>Leg Extension <span class="teknik"><strong>Teknik:</strong> Angkat betis, kontraksikan quad</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Quadriceps</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">5</td>
+                        <td>Leg Curl <span class="teknik"><strong>Teknik:</strong> Tekuk lutut ke bawah, kontraksikan hamstring</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Hamstring</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">6</td>
+                        <td>Standing Calf Raise <span class="teknik"><strong>Teknik:</strong> Angkat tumit setinggi mungkin</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Betis</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">7</td>
+                        <td>Hanging Leg Raise <span class="teknik"><strong>Teknik:</strong> Angkat lutut ke dada</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">12–15</td>
+                        <td class="target-col">Core</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="hari-label">📅 JUMAT – LENGAN (ARMS)</div>
+            <div class="warmup">🔥 WARM-UP: 5-10 menit cardio + Arm Circles + Wrist Rolls</div>
+            <div class="rest-info">⏱️ REST: 60 detik</div>
+            <table>
+                <thead><tr><th>No</th><th>Latihan</th><th>Set</th><th>Reps</th><th>Otot Target</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="no-col">1</td>
+                        <td>EZ Bar Curl <span class="teknik"><strong>Teknik:</strong> Siku di sisi, tekuk ke atas</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">8–12</td>
+                        <td class="target-col">Bisep</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">2</td>
+                        <td>Rope Tricep Pushdown <span class="teknik"><strong>Teknik:</strong> Dorong ke bawah, kontraksikan trisep</span></td>
+                        <td class="set-col" data-set="4">4</td>
+                        <td class="reps-col">10–15</td>
+                        <td class="target-col">Trisep</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">3</td>
+                        <td>Hammer Curl <span class="teknik"><strong>Teknik:</strong> Genggam netral, tekuk ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Bisep (Brachialis)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">4</td>
+                        <td>Skull Crusher <span class="teknik"><strong>Teknik:</strong> Turunkan ke dahi, ekstensi ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Trisep (Long Head)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">5</td>
+                        <td>Preacher Curl <span class="teknik"><strong>Teknik:</strong> Sandaran lengan di pad, tekuk ke atas</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Bisep (Short Head)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">6</td>
+                        <td>Overhead Rope Extension <span class="teknik"><strong>Teknik:</strong> Rope di atas kepala, turunkan ke belakang</span></td>
+                        <td class="set-col" data-set="3">3</td>
+                        <td class="reps-col">10–12</td>
+                        <td class="target-col">Trisep (Long Head)</td>
+                    </tr>
+                    <tr>
+                        <td class="no-col">7</td>
+                        <td>Wrist Curl <span class="teknik"><strong>Teknik:</strong> Tekuk pergelangan ke atas, kontraksikan forearm</span></td>
+                        <td class="set-col" data-set="2">2</td>
+                        <td class="reps-col">15–20</td>
+                        <td class="target-col">Forearm</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ===== QUOTE ===== -->
+        <div class="quote-box" id="quoteBox">
+            💪 <strong>"</strong><span id="quoteText">The only bad workout is the one that didn't happen.</span><strong>"</strong>
+        </div>
+
+        <!-- ===== MUSIK ===== -->
+        <div class="musik-box">
+            <span style="font-weight:600;color:var(--text-secondary);">🎵 Playlist Gym:</span>
+            <a href="https://open.spotify.com/playlist/37i9dQZF1DX7QOv5kjbU68" target="_blank">🎧 Spotify</a>
+            <a href="https://www.youtube.com/watch?v=UxxajLWwzqY&list=PLYHeYQNFQcnD9VH5HlHVxQ2DqOp3R3aPj" target="_blank">📺 YouTube</a>
+            <a href="https://music.apple.com/id/playlist/gym-energy/pl.9fc3e4c6b4f24d2cb61f7bc8b9c87b2c" target="_blank">🍎 Apple Music</a>
+        </div>
+
+        <!-- ===== DEVELOPER ===== -->
+        <div class="developer">
+            🏋️ Dibuat oleh <a href="https://www.instagram.com/mirfanasy" target="_blank">@mirfanasy</a> •
+            Follow untuk tips gym & motivasi harian! 💪🔥
+        </div>
+
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- ===== JAVASCRIPT =============================================== -->
+    <!-- ================================================================ -->
+    <script>
+        // ===== NAVIGASI =====
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const sections = {
+            ppl: document.getElementById('ppl'),
+            upperlower: document.getElementById('upperlower'),
+            fullbody: document.getElementById('fullbody'),
+            brosplit: document.getElementById('brosplit')
+        };
+
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                navButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                Object.values(sections).forEach(sec => sec.classList.remove('active'));
+                const target = this.dataset.target;
+                if (sections[target]) sections[target].classList.add('active');
+                updateQuote();
+                updateStats();
+                updateProgress();
+                updateChart();
+            });
+        });
+
+        // ===== QUOTE =====
+        const quotes = [
+            "The only bad workout is the one that didn't happen.",
+            "Don't limit your challenges, challenge your limits.",
+            "Strive for progress, not perfection.",
+            "The pain you feel today is the strength you feel tomorrow.",
+            "Success starts with self-discipline.",
+            "Be stronger than your excuses.",
+            "Your body can stand almost anything. It's your mind you have to convince.",
+            "The best project you'll ever work on is you.",
+            "Sweat is fat crying.",
+            "Dream big. Work hard. Stay focused.",
+            "What seems impossible today will one day be your warm-up.",
+            "Consistency over intensity.",
+            "The comeback is always stronger than the setback."
+        ];
+
+        function updateQuote() {
+            const q = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('quoteText').textContent = q;
+        }
+        updateQuote();
+
+        // ===== DARK MODE =====
+        const darkToggle = document.getElementById('darkToggle');
+        let darkMode = false;
+        darkToggle.addEventListener('click', function() {
+            darkMode = !darkMode;
+            document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+            this.textContent = darkMode ? '☀️' : '🌙';
+        });
+
+        // ===== LEVEL =====
+        const levelBtns = document.querySelectorAll('.level-btn');
+        let currentLevel = 'pemula';
+
+        levelBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                levelBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentLevel = this.dataset.level;
+                updateWorkoutVolume();
+            });
+        });
+
+        function updateWorkoutVolume() {
+            const tables = document.querySelectorAll('.content-section.active table');
+            tables.forEach(table => {
+                const rows = table.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const setCell = row.querySelector('.set-col');
+                    if (!setCell) return;
+                    let baseSet = parseInt(setCell.dataset.set) || 3;
+                    let newSet = baseSet;
+                    if (currentLevel === 'pemula') newSet = Math.max(2, baseSet - 1);
+                    else if (currentLevel === 'lanjutan') newSet = baseSet + 1;
+                    setCell.textContent = newSet;
+                });
+            });
+        }
+        updateWorkoutVolume();
+
+        // ===== TIMER =====
+        let timerInterval = null;
+        let timerSeconds = 60;
+        let timerRunning = false;
+        let timerRemaining = 60;
+
+        const timerDisplay = document.getElementById('timerDisplay');
+        const timerBtns = document.querySelectorAll('.timer-btn');
+
+        timerBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                timerBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                timerSeconds = parseInt(this.dataset.time);
+                timerRemaining = timerSeconds;
+                updateTimerDisplay(timerRemaining);
+                if (timerRunning) {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    document.getElementById('timerStart').textContent = '▶ Mulai';
+                }
+            });
+        });
+
+        function updateTimerDisplay(seconds) {
+            const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+            const s = String(seconds % 60).padStart(2, '0');
+            timerDisplay.textContent = `${m}:${s}`;
+        }
+
+        document.getElementById('timerStart').addEventListener('click', function() {
+            if (timerRunning) {
+                clearInterval(timerInterval);
+                timerRunning = false;
+                this.textContent = '▶ Mulai';
+                return;
+            }
+            if (timerRemaining <= 0) {
+                timerRemaining = timerSeconds;
+                updateTimerDisplay(timerRemaining);
+            }
+            timerRunning = true;
+            this.textContent = '⏸️ Hentikan';
+            timerInterval = setInterval(() => {
+                timerRemaining--;
+                updateTimerDisplay(timerRemaining);
+                if (timerRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    document.getElementById('timerStart').textContent = '▶ Mulai';
+                    alert('⏰ Waktu istirahat selesai! Lanjutkan latihan! 💪');
+                    try {
+                        const ctx = new(window.AudioContext || window.webkitAudioContext)();
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.frequency.value = 800;
+                        gain.gain.value = 0.3;
+                        osc.start();
+                        setTimeout(() => { osc.stop(); }, 300);
+                    } catch (e) {}
+                }
+            }, 1000);
+        });
+
+        document.getElementById('timerReset').addEventListener('click', function() {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            document.getElementById('timerStart').textContent = '▶ Mulai';
+            timerRemaining = timerSeconds;
+            updateTimerDisplay(timerRemaining);
+        });
+
+        // ===== RPE =====
+        const rpeBtns = document.querySelectorAll('.rpe-btn');
+        let currentRPE = 8;
+
+        rpeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                rpeBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentRPE = parseInt(this.dataset.rpe);
+                document.getElementById('rpeDisplay').textContent = `RPE: ${currentRPE}`;
+            });
+        });
+
+        // ===== JOURNAL =====
+        const journalInput = document.getElementById('journalInput');
+        const journalEntries = document.getElementById('journalEntries');
+
+        function loadJournal() {
+            const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+            journalEntries.innerHTML = '';
+            entries.slice().reverse().forEach(entry => {
+                const div = document.createElement('div');
+                div.className = 'journal-entry';
+                div.innerHTML = `<strong>${entry.date}</strong> | RPE: ${entry.rpe}<br>${entry.text}`;
+                journalEntries.appendChild(div);
+            });
+        }
+        loadJournal();
+
+        document.getElementById('journalSave').addEventListener('click', function() {
+            const text = journalInput.value.trim();
+            if (!text) { alert('Tulis catatan dulu!'); return; }
+            const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+            entries.push({
+                date: new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short',
+                    year: 'numeric' }),
+                rpe: currentRPE,
+                text: text
+            });
+            localStorage.setItem('journalEntries', JSON.stringify(entries));
+            journalInput.value = '';
+            loadJournal();
+            alert('✅ Catatan berhasil disimpan!');
+        });
+
+        // ===== KALENDER =====
+        function generateCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+            const today = new Date();
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - today.getDay() + 1);
+
+            grid.innerHTML = '';
+            days.forEach((name, i) => {
+                const date = new Date(startOfWeek);
+                date.setDate(startOfWeek.getDate() + i);
+                const dateStr = date.toISOString().split('T')[0];
+                const isDone = localStorage.getItem('cal_' + dateStr) === 'true';
+
+                const div = document.createElement('div');
+                div.className = 'cal-day' + (isDone ? ' done' : '');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = isDone;
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        div.classList.add('done');
+                        localStorage.setItem('cal_' + dateStr, 'true');
+                    } else {
+                        div.classList.remove('done');
+                        localStorage.setItem('cal_' + dateStr, 'false');
+                    }
+                    updateStats();
+                    updateProgress();
+                });
+
+                const label = document.createElement('span');
+                label.textContent = name;
+                const dateLabel = document.createElement('span');
+                dateLabel.className = 'cal-date';
+                dateLabel.textContent = date.getDate() + '/' + (date.getMonth() + 1);
+
+                div.appendChild(checkbox);
+                div.appendChild(label);
+                div.appendChild(dateLabel);
+                grid.appendChild(div);
+            });
+            updateStats();
+            updateProgress();
+        }
+        generateCalendar();
+
+        // ===== STATISTIK =====
+        function updateStats() {
+            const checkboxes = document.querySelectorAll('#calendarGrid input[type="checkbox"]');
+            let daysDone = 0;
+            let totalSets = 0;
+            let totalReps = 0;
+            let totalVolume = 0;
+
+            checkboxes.forEach(cb => {
+                if (cb.checked) daysDone++;
+            });
+
+            const activeTables = document.querySelectorAll('.content-section.active table');
+            activeTables.forEach(table => {
+                const rows = table.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const setText = row.querySelector('.set-col')?.textContent || '0';
+                    const setNum = parseInt(setText) || 0;
+                    const repsText = row.querySelector('.reps-col')?.textContent || '0';
+                    const repsParts = repsText.split('–');
+                    const avgReps = repsParts.length > 1 ? (parseInt(repsParts[0]) + parseInt(repsParts[1])) /
+                        2 : parseInt(repsParts[0]) || 0;
+                    totalSets += setNum;
+                    totalReps += setNum * avgReps;
+                    totalVolume += setNum * avgReps * 20; // estimasi beban 20kg
+                });
+            });
+
+            document.getElementById('statSets').textContent = totalSets;
+            document.getElementById('statReps').textContent = totalReps;
+            document.getElementById('statVolume').textContent = totalVolume;
+            document.getElementById('statDays').textContent = daysDone;
+        }
+
+        // ===== PROGRESS BAR =====
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('#calendarGrid input[type="checkbox"]');
+            const total = checkboxes.length;
+            let done = 0;
+            checkboxes.forEach(cb => { if (cb.checked) done++; });
+            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+            const bar = document.getElementById('progressBarInner');
+            bar.style.width = pct + '%';
+            bar.textContent = pct + '%';
+        }
+
+        // ===== 1RM =====
+        document.getElementById('rmCalculate').addEventListener('click', function() {
+            const weight = parseFloat(document.getElementById('rmWeight').value);
+            const reps = parseInt(document.getElementById('rmReps').value);
+            if (isNaN(weight) || weight <= 0) {
+                document.getElementById('rmResult').textContent = '❌ Masukkan beban yang valid';
+                return;
+            }
+            const rm = weight * (1 + reps / 30);
+            document.getElementById('rmResult').textContent = `🏆 1RM ≈ ${rm.toFixed(1)} kg`;
+        });
+
+        // ===== GRAFIK =====
+        let chart = null;
+
+        function getSampleData() {
+            const saved = localStorage.getItem('progressData');
+            if (saved) return JSON.parse(saved);
+            return [
+                { week: 'Minggu 1', bench: 40, squat: 50, deadlift: 55 },
+                { week: 'Minggu 2', bench: 42, squat: 55, deadlift: 58 },
+                { week: 'Minggu 3', bench: 45, squat: 58, deadlift: 60 },
+                { week: 'Minggu 4', bench: 48, squat: 62, deadlift: 65 }
+            ];
+        }
+
+        function updateChart() {
+            const data = getSampleData();
+            const ctx = document.getElementById('progressChart').getContext('2d');
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            // Cek apakah dark mode aktif
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
+            const textColor = isDark ? '#e4e4e4' : '#333';
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(d => d.week),
+                    datasets: [{
+                        label: 'Bench Press',
+                        data: data.map(d => d.bench),
+                        borderColor: '#e94560',
+                        backgroundColor: 'rgba(233,69,96,0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4
+                    }, {
+                        label: 'Squat',
+                        data: data.map(d => d.squat),
+                        borderColor: '#0f3460',
+                        backgroundColor: 'rgba(15,52,96,0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4
+                    }, {
+                        label: 'Deadlift',
+                        data: data.map(d => d.deadlift),
+                        borderColor: '#2d6a4f',
+                        backgroundColor: 'rgba(45,106,79,0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: textColor, font: { size: 10 } }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: gridColor },
+                            ticks: { color: textColor, font: { size: 9 } }
+                        },
+                        y: {
+                            grid: { color: gridColor },
+                            ticks: { color: textColor, font: { size: 9 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ===== EXPORT CSV =====
+        document.getElementById('exportCSV').addEventListener('click', function() {
+            const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+            let csv = 'Tanggal,RPE,Catatan\n';
+            entries.forEach(e => {
+                csv += `"${e.date}",${e.rpe},"${e.text.replace(/"/g,'""')}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `gym_journal_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('📥 Data berhasil di-export!');
+        });
+
+        // ===== SIMPAN DATA PROGRES SAMPLE =====
+        // Inisialisasi data sample jika belum ada
+        if (!localStorage.getItem('progressData')) {
+            localStorage.setItem('progressData', JSON.stringify([
+                { week: 'Minggu 1', bench: 40, squat: 50, deadlift: 55 },
+                { week: 'Minggu 2', bench: 42, squat: 55, deadlift: 58 },
+                { week: 'Minggu 3', bench: 45, squat: 58, deadlift: 60 },
+                { week: 'Minggu 4', bench: 48, squat: 62, deadlift: 65 }
+            ]));
+        }
+
+        // ===== INISIALISASI =====
+        updateChart();
+        updateStats();
+        updateProgress();
+
+        // Update chart saat dark mode berubah
+        document.getElementById('darkToggle').addEventListener('click', function() {
+            setTimeout(updateChart, 100);
+        });
+
+        // ===== UPDATE CHART SAAT GANTI MENU =====
+        // Chart tetap sama untuk semua menu, tidak perlu update ulang
+    </script>
+
+</body>
+</html>
